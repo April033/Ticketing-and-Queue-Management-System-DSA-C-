@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ticketing and Queue Management System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <span class="category-badge">DSA Mini-Project &bull; Queue (FIFO)</span>
+        <h1>Ticketing and Queue Management System</h1>
+        <p class="subtitle">A visual, educational implementation of First-In, First-Out customer service</p>
+      </div>
+      <div class="header-right">
+        <button id="btnReset" class="btn btn-reset" onclick="handleReset()">Reset System</button>
+      </div>
+    </header>
+
+    <!-- Metrics & Counter Board -->
+    <section class="dashboard-grid">
+      <!-- Now Serving Display Card -->
+      <div class="card counter-card">
+        <div class="counter-header">
+          <span class="counter-label">NOW SERVING / COUNTER</span>
+          <span class="live-indicator">LIVE</span>
+        </div>
+        <div class="counter-display" id="servingDisplay">
+          <span class="serving-number" id="currentTicket">---</span>
+          <span class="serving-status" id="servingStatus">No customer being served</span>
+        </div>
+        <div class="counter-action">
+          <button id="btnServe" class="btn btn-primary btn-large" onclick="handleServeNext()">
+            Serve Next Customer &rarr;
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Statistics Card -->
+      <div class="card stats-card">
+        <h2 class="card-title">Queue Status</h2>
+        <div class="stats-list">
+          <div class="stat-item">
+            <span class="stat-label">Waiting in Queue</span>
+            <span class="stat-value" id="statWaitingCount">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Queue State</span>
+            <span class="stat-value state-badge empty" id="statQueueState">EMPTY</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Last Generated Ticket</span>
+            <span class="stat-value" id="statLastGenerated">None</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Total Served Today</span>
+            <span class="stat-value" id="statTotalServed">0</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ticket Generator & Operator Controls -->
+    <section class="card action-card">
+      <h2 class="card-title">Ticket Dispenser</h2>
+      <div class="dispenser-controls">
+        <div class="input-wrapper">
+          <input 
+            type="text" 
+            id="customerNameInput" 
+            placeholder="Optional Customer Name (e.g. Alice)" 
+            maxlength="20"
+            autocomplete="off"
+          />
+        </div>
+        <button id="btnGenerate" class="btn btn-accent" onclick="handleGenerateTicket()">
+          + Generate Ticket
+        </button>
+      </div>
+      <div id="statusMessage" class="status-banner info">
+        System ready. Click <strong>Generate Ticket</strong> to issue a customer token.
+      </div>
+    </section>
+
+    <!-- Visual Waiting Queue (FIFO Track) -->
+    <section class="card queue-card">
+      <div class="queue-header">
+        <div class="queue-title-group">
+          <h2 class="card-title">Waiting Queue (FIFO Order)</h2>
+          <span class="queue-count-tag" id="queueCountTag">0 Waiting</span>
+        </div>
+        <div class="fifo-legend">
+          <span class="legend-badge front-legend">&larr; FRONT (Next in Line)</span>
+          <span class="legend-badge rear-legend">REAR (Latest Arrival) &larr;</span>
+        </div>
+      </div>
+
+      <!-- Queue Cards Viewport -->
+      <div class="queue-viewport">
+        <div id="queueTrack" class="queue-track">
+          <!-- Dynamically populated by script.js -->
+          <div class="empty-state" id="emptyStatePlaceholder">
+            The queue is currently empty. Generated tickets will appear here in arrival order.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lower Section: Activity Log & Complexity Cheat Sheet -->
+    <section class="bottom-grid">
+      <!-- Activity Log -->
+      <div class="card log-card">
+        <div class="log-header">
+          <h2 class="card-title">Activity &amp; Event Log</h2>
+          <button class="btn-link" onclick="clearLog()">Clear Log</button>
+        </div>
+        <ul id="activityLog" class="activity-log-list">
+          <li class="log-entry system">[SYSTEM] Ticketing session initialized.</li>
+        </ul>
+      </div>
+
+      <!-- Queue Complexity Reference -->
+      <div class="card reference-card">
+        <h2 class="card-title">Array Queue Operations &amp; Complexity</h2>
+        <table class="reference-table">
+          <thead>
+            <tr>
+              <th>Operation</th>
+              <th>Array Method</th>
+              <th>Time Complexity</th>
+              <th>Behavior</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>enqueue()</code></td>
+              <td><code>push()</code></td>
+              <td><span class="badge-tag good">O(1)</span></td>
+              <td>Appends to the REAR of queue</td>
+            </tr>
+            <tr>
+              <td><code>dequeue()</code></td>
+              <td><code>shift()</code></td>
+              <td><span class="badge-tag linear">O(n)</span></td>
+              <td>Removes FRONT; shifts remaining items</td>
+            </tr>
+            <tr>
+              <td><code>peek()</code></td>
+              <td><code>queue[0]</code></td>
+              <td><span class="badge-tag good">O(1)</span></td>
+              <td>Inspects FRONT without removal</td>
+            </tr>
+            <tr>
+              <td><code>isEmpty()</code></td>
+              <td><code>length === 0</code></td>
+              <td><span class="badge-tag good">O(1)</span></td>
+              <td>Direct length comparison</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="reference-note">
+          *Note: <code>shift()</code> runs in O(n) because JavaScript must reindex all remaining elements.
+        </p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Ticketing and Queue Management System &bull; College DSA Demonstration Project</p>
+    </footer>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
